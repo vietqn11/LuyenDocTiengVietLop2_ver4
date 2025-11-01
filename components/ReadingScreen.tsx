@@ -7,7 +7,6 @@ import SpeakerIcon from './icons/SpeakerIcon';
 import MicIcon from './icons/MicIcon';
 import StopIcon from './icons/StopIcon';
 import Spinner from './Spinner';
-import { AUDIO_SAMPLES } from '../constants/audioSamples';
 
 interface ReadingScreenProps {
   user: User;
@@ -66,7 +65,7 @@ const ReadingScreen: React.FC<ReadingScreenProps> = ({ user, lesson, onFinish, o
       setIsRecording(true);
       setError(null);
       
-      const keyToUse = user.apiKey || process.env.API_KEY;
+      const keyToUse = user.apiKey || (window as any).process?.env?.API_KEY;
       if (!keyToUse) {
         throw new Error('Không tìm thấy API Key. Vui lòng cung cấp API Key cá nhân.');
       }
@@ -169,18 +168,8 @@ const ReadingScreen: React.FC<ReadingScreenProps> = ({ user, lesson, onFinish, o
     setIsSamplePlaying(true);
     setError(null);
     
-    const placeholderAudio = 'UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';
-    let audio: string | null = AUDIO_SAMPLES[lesson.id] || null;
-
-    // Nếu không có âm thanh tạo sẵn hoặc đó là dữ liệu placeholder, gọi API.
-    if (!audio || audio === placeholderAudio) {
-      if (audio === placeholderAudio) {
-        console.warn(`Âm thanh mẫu cho bài ${lesson.id} là placeholder. Sẽ gọi API để tạo âm thanh mới.`);
-      } else {
-        console.warn(`Không có âm thanh tạo sẵn cho bài ${lesson.id}. Gọi API...`);
-      }
-      audio = await generateTextToSpeech(lesson.text, user.apiKey);
-    }
+    // Luôn gọi API để tạo giọng đọc mới
+    const audio = await generateTextToSpeech(lesson.text, user.apiKey);
 
     if (audio) {
       await play(audio);

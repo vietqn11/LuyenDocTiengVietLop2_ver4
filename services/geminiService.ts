@@ -1,7 +1,7 @@
 import { GoogleGenAI, Modality, Type } from "@google/genai";
 import { ReadingResult } from "../types";
 
-const API_KEY = process.env.API_KEY;
+const API_KEY = (window as any).process?.env?.API_KEY;
 if (!API_KEY) {
   console.warn("API_KEY environment variable not set. Please provide a personal API Key.");
 }
