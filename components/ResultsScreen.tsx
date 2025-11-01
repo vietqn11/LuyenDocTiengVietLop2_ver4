@@ -56,15 +56,18 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ user, result, lesson, onT
   const showConfetti = result.scores.overall >= 8;
 
   const groupedErrors = useMemo(() => {
-    return result.errors.reduce((acc, error) => {
+    // FIX: Explicitly typing the accumulator `acc` in the reduce function ensures that
+    // TypeScript correctly infers the type of `groupedErrors`. This resolves the errors
+    // where properties like `.map` could not be found on `unknown` type and where
+    // `unknown` was passed to functions expecting a `ReadingError[]`.
+    return result.errors.reduce((acc: Record<string, ReadingError[]>, error) => {
       const sentence = error.contextSentence;
       if (!acc[sentence]) {
         acc[sentence] = [];
       }
       acc[sentence].push(error);
       return acc;
-    // FIX: Explicitly type the initial value for the reduce accumulator to resolve 'unknown' type error.
-    }, {} as Record<string, ReadingError[]>);
+    }, {});
   }, [result.errors]);
 
   const sentencesWithErrors = useMemo(() => Object.keys(groupedErrors), [groupedErrors]);
