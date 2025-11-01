@@ -65,7 +65,7 @@ const ReadingScreen: React.FC<ReadingScreenProps> = ({ user, lesson, onFinish, o
       setIsRecording(true);
       setError(null);
       
-      const keyToUse = user.apiKey || (window as any).process?.env?.API_KEY;
+      const keyToUse = user.apiKey || process.env.API_KEY;
       if (!keyToUse) {
         throw new Error('Không tìm thấy API Key. Vui lòng cung cấp API Key cá nhân.');
       }
